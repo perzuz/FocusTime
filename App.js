@@ -67,10 +67,10 @@ export default function App() {
           }}
         />
         :
-        <>
+        <View style={{flex: 1}}>
           <Focus addSubject={setFocusSubject} />
           <FocusHistory focusHistory={focusHistory} onClear={onClear} />
-        </>
+        </View>
       }
     </View>
   );
