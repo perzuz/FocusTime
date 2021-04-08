@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Focus } from './src/features/Focus/Focus';
 import { FocusHistory } from './src/features/Focus/FocusHistory';
 import { Timer } from './src/features/Timer/Timer';
@@ -21,8 +22,37 @@ export default function App() {
   };
 
   const onClear = () => {
-    // things to do
+    setFocusHistory([]);
   };
+
+  const saveFocusHistory = async () => {
+    try {
+      await AsyncStorage.setItem("focusHistory", JSON.stringify(focusHistory));
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+
+  const loadFocusHistory = async () => {
+    try {
+      const history = await AsyncStorage.getItem("focusHistory");
+
+      if (history && JSON.parse(history).length) {
+        setFocusHistory(JSON.parse(history));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  useEffect(() => {
+    loadFocusHistory();
+  }, [])
+
+  useEffect(() => {
+    saveFocusHistory();
+  }, [focusHistory])
 
   return (
     <View style={styles.container}>
@@ -39,7 +69,7 @@ export default function App() {
         :
         <>
           <Focus addSubject={setFocusSubject} />
-          <FocusHistory focusHistory={focusHistory} onClear={onClear}/>
+          <FocusHistory focusHistory={focusHistory} onClear={onClear} />
         </>
       }
     </View>
